@@ -34,6 +34,18 @@ class Post(object):
     def is_valid(self):
         return self.front_matter is not None and len(self.content) > 0 and not self.is_draft()
 
+    def save(self):
+        if not self.is_valid():
+            return
+
+        m = RE_FRONT_MATTER.search(self.raw_content)
+        with open(self.path, 'w') as f:
+            f.write(
+                self.raw_content.replace(m.group(1),
+                                         yaml.dump(self.front_matter,
+                                                   allow_unicode=True, default_flow_style=None))
+            )
+
     @staticmethod
     def create(path, raw_content):
         front_matter = None

@@ -2,12 +2,10 @@ from .post import Post
 
 import os
 import re
-import yaml
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-RE_FRONT_MATTER = re.compile(r'---\n([\s\S]*?\n)---\n')
 RE_PATH_TO_PERMALINK = re.compile(r'((/ja){0,1}/note/.+?)(\.md|\.html)')
 
 def extract_contents(paths):
@@ -57,21 +55,7 @@ def recommend(posts, topk=3, tokenizer=None):
 
 def update_front_matter(posts):
     for post in posts:
-        path = post.path
-
-        with open(path) as f:
-            content = f.read()
-
-        m = RE_FRONT_MATTER.search(content)
-        if m is None:
-            return
-
-        with open(path, 'w') as f:
-            f.write(content.replace(
-                m.group(1),
-                yaml.dump(post.front_matter, allow_unicode=True,
-                          default_flow_style=None)))
-
+        post.save()
 
 def process(path_dir, tokenizer=None, custom_funcs=[]):
     assert os.path.isdir(os.path.expanduser(path_dir)), \
