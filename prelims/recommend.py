@@ -3,14 +3,12 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-RE_PATH_TO_PERMALINK = re.compile(r'((/ja){0,1}/note/.+?)(\.md|\.html)')
+
+def path_to_permalink(path, permalink_base):
+    return re.search(rf'({re.escape(permalink_base)}/.+?)(\.md|\.html)', path).group(1) + '/'
 
 
-def path_to_permalink(path):
-    return RE_PATH_TO_PERMALINK.search(path).group(1) + '/'
-
-
-def recommend(posts, topk=3, tokenizer=None):
+def recommend(posts, permalink_base='', topk=3, tokenizer=None):
     """Content-based collaborative filtering
     """
     contents = [post.content for post in posts]
@@ -32,7 +30,7 @@ def recommend(posts, topk=3, tokenizer=None):
         top_indices = np.argsort(
             similarities[i, :], kind='stable')[::-1][1:(topk + 1)]
         recommend_permalinks = [
-            path_to_permalink(paths[j]) for j in top_indices
+            path_to_permalink(paths[j], permalink_base) for j in top_indices
         ]
 
         posts[i].update('keywords', keywords[i, :10].tolist(), allow_overwrite=True)

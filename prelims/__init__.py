@@ -21,14 +21,14 @@ def update_front_matter(posts):
         post.save()
 
 
-def process(path_dir, tokenizer=None, custom_funcs=[]):
+def process(path_dir, permalink_base='', tokenizer=None, custom_funcs=[]):
     assert os.path.isdir(os.path.expanduser(path_dir)), \
             f'path {path_dir} is not a directory or does not exist'
     paths = [os.path.join(path_dir, f) for f in os.listdir(path_dir)]
 
     posts = extract_contents(paths)
 
-    recommend(posts, topk=3, tokenizer=tokenizer)
+    recommend(posts, permalink_base=permalink_base, topk=3, tokenizer=tokenizer)
     for func in custom_funcs:
         func(posts)
 
