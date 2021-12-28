@@ -47,7 +47,10 @@ class Post(object):
             )
 
     @staticmethod
-    def create(path, raw_content):
+    def load(path):
+        with open(path) as f:
+            raw_content = f.read()
+
         front_matter = None
         content = raw_content
 

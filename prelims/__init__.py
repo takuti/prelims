@@ -7,10 +7,7 @@ import os
 def extract_contents(paths):
     posts = []
     for path in paths:
-        with open(path) as f:
-            raw_content = f.read()
-
-        post = Post.create(path, raw_content)
+        post = Post.load(path)
         if post.is_valid():
             posts.append(post)
     return posts
