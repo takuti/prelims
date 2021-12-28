@@ -1,8 +1,9 @@
+from .post import Post
+
 import os
 import re
 import yaml
 import numpy as np
-from collections import OrderedDict
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -41,28 +42,30 @@ def extract_contents(paths):
         for re_filter in RE_FILTERS:
             content = re_filter.sub('', content)
 
-        yield (path, content)
+        yield Post(path, front_matter, content)
 
 
 def path_to_permalink(path):
     return RE_PATH_TO_PERMALINK.search(path).group(1) + '/'
 
 
-def recommend(articles, topk=3, tokenizer=None):
+def recommend(posts, topk=3, tokenizer=None):
     """Content-based collaborative filtering
     """
+    contents = [post.content for post in posts]
+    paths = [post.path for post in posts]
+
     # build model
     vectorizer = TfidfVectorizer(max_df=0.95, tokenizer=tokenizer)
 
-    tfidf = vectorizer.fit_transform(articles.values())
+    tfidf = vectorizer.fit_transform(contents)
 
     indices = tfidf.toarray().argsort(axis=1, kind='stable')[:, ::-1]
     keywords = np.array(vectorizer.get_feature_names_out())[indices]
 
     similarities = cosine_similarity(tfidf)
 
-    paths = list(articles.keys())
-    for i, path in enumerate(paths):
+    for i in range(len(contents)):
         # find top-k most-similar articles
         # (except for target article itself which is similarity=1.0)
         top_indices = np.argsort(
@@ -71,55 +74,37 @@ def recommend(articles, topk=3, tokenizer=None):
             path_to_permalink(paths[j]) for j in top_indices
         ]
 
-        yield (
-            path, {
-                'keywords': keywords[i, :10].tolist(),
-                'recommendations': recommend_permalinks
-            }
-        )
+        posts[i].update('keywords', keywords[i, :10].tolist(), allow_overwrite=True)
+        posts[i].update('recommendations', recommend_permalinks, allow_overwrite=True)
 
 
-def update_front_matter(path, custom_front_matter, allow_overwrite):
-    with open(path) as f:
-        content = f.read()
+def update_front_matter(posts):
+    for post in posts:
+        path = post.path
 
-    m = RE_FRONT_MATTER.search(content)
-    if m is None:
-        return
+        with open(path) as f:
+            content = f.read()
 
-    front_matter = yaml.safe_load(m.group(1))
-    front_matter = {
-        **front_matter,
-        **{
-            key: value for key, value in custom_front_matter.items()
-            if key not in front_matter or key in allow_overwrite
-        }
-    }
+        m = RE_FRONT_MATTER.search(content)
+        if m is None:
+            return
 
-    with open(path, 'w') as f:
-        f.write(content.replace(
-            m.group(1),
-            yaml.dump(front_matter, allow_unicode=True,
-                      default_flow_style=None)))
+        with open(path, 'w') as f:
+            f.write(content.replace(
+                m.group(1),
+                yaml.dump(post.front_matter, allow_unicode=True,
+                          default_flow_style=None)))
 
 
-def process(path_dir, tokenizer=None, custom_funcs=[],
-            allow_overwrite=['keywords', 'recommendations']):
+def process(path_dir, tokenizer=None, custom_funcs=[]):
     assert os.path.isdir(os.path.expanduser(path_dir)), \
             f'path {path_dir} is not a directory or does not exist'
     paths = [os.path.join(path_dir, f) for f in os.listdir(path_dir)]
 
-    articles = OrderedDict(extract_contents(paths))
+    posts = list(extract_contents(paths))
 
-    custom_front_matters = dict(
-        recommend(articles, topk=3, tokenizer=tokenizer))
+    recommend(posts, topk=3, tokenizer=tokenizer)
     for func in custom_funcs:
-        for path, front_matter in func(articles):
-            if path not in custom_front_matters:
-                custom_front_matters[path] = front_matter
-            else:  # merge
-                custom_front_matters[path] = {**custom_front_matters[path],
-                                              **front_matter}
+        func(posts)
 
-    for path, front_matter in custom_front_matters.items():
-        update_front_matter(path, front_matter, allow_overwrite)
+    update_front_matter(posts)
