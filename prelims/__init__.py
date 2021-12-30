@@ -1,21 +1,7 @@
-from .post import Post
 from .processors.recommender import Recommender
+from .utils import load_posts, save_posts
 
 import os
-
-
-def extract_contents(paths):
-    posts = []
-    for path in paths:
-        post = Post.load(path)
-        if post.is_valid():
-            posts.append(post)
-    return posts
-
-
-def update_front_matter(posts):
-    for post in posts:
-        post.save()
 
 
 def process(path_dir, permalink_base='', tokenizer=None, custom_processors=[]):
@@ -23,7 +9,7 @@ def process(path_dir, permalink_base='', tokenizer=None, custom_processors=[]):
             f'path {path_dir} is not a directory or does not exist'
     paths = [os.path.join(path_dir, f) for f in os.listdir(path_dir)]
 
-    posts = extract_contents(paths)
+    posts = load_posts(paths)
 
     recommender = Recommender(permalink_base=permalink_base, topk=3,
                               tokenizer=tokenizer)
@@ -31,4 +17,4 @@ def process(path_dir, permalink_base='', tokenizer=None, custom_processors=[]):
     for processor in custom_processors:
         processor.process(posts)
 
-    update_front_matter(posts)
+    save_posts(posts)
