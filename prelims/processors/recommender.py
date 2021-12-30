@@ -14,7 +14,8 @@ class Recommender(BaseFrontMatterProcessor):
         self.tokenizer = tokenizer
 
     def process(self, posts):
-        """Content-based filtering
+        """Extract keywords and generate a list of recommended articles
+        based on the content-based filtering technique.
         """
         contents = [post.content for post in posts]
         paths = [post.path for post in posts]
@@ -46,5 +47,5 @@ class Recommender(BaseFrontMatterProcessor):
     def __path_to_permalink(self, path):
         """Extract a permalink portion of a file path, excluding a file extension.
         """
-        return re.search(rf'({re.escape(self.permalink_base)}/.+?)(\.md|\.html)',
-                        path).group(1) + '/'
+        pattern = rf'({re.escape(self.permalink_base)}/.+?)(\.md|\.html)'
+        return re.search(pattern, path).group(1) + '/'
