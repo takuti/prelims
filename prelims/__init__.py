@@ -1,10 +1,10 @@
 from .processors.recommender import Recommender
-from .handler import PostsHandler
+from .handler import StaticSitePostsHandler
 
 
 def process(path_dir, permalink_base='', tokenizer=None, custom_processors=[]):
 
-    handler = PostsHandler(path_dir)
+    handler = StaticSitePostsHandler(path_dir)
     recommender = Recommender(permalink_base=permalink_base, topk=3,
                               tokenizer=tokenizer)
     handler.register_processor(recommender)

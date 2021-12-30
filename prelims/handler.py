@@ -3,7 +3,7 @@ from .post import Post
 import os
 
 
-class PostsHandler(object):
+class StaticSitePostsHandler(object):
 
     def __init__(self, path_dir):
         assert os.path.isdir(os.path.expanduser(path_dir)), \
