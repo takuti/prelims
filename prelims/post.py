@@ -29,7 +29,9 @@ class Post(object):
 
     def is_draft(self):
         # avoid processing draft articles
-        return 'draft' in self.front_matter and self.front_matter['draft']
+        return ('draft' in self.front_matter and self.front_matter['draft']) \
+                or ('published' in self.front_matter and
+                    not self.front_matter['published'])
 
     def is_valid(self):
         return self.front_matter is not None \
