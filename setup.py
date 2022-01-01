@@ -1,13 +1,55 @@
 from setuptools import setup, find_packages
 
-setup(
-    name='prelims',
-    version='0.0.1',
-    description='Front matter post-processor for static site generators',
-    author='Takuya Kitazawa',
-    author_email='k.takuti@gmail.com',
-    license='MIT',
-    url='https://github.com/takuti/prelims',
-    packages=find_packages(exclude=['*tests*']),
-    install_requires=['numpy', 'scikit_learn', 'PyYAML'],
-)
+DISTNAME = 'prelims'
+VERSION = '0.0.1'
+DESCRIPTION = 'Front matter post-processor for static site generators'
+with open('README.md') as f:
+    LONG_DESCRIPTION = f.read()
+LONG_DESCRIPTION_CONTENT_TYPE = 'text/markdown'
+AUTHOR = 'Takuya Kitazawa'
+AUTHOR_EMAIL = 'k.takuti@gmail.com'
+LICENSE = 'MIT'
+URL = 'https://github.com/takuti/prelims'
+DOWNLOAD_URL = 'https://pypi.org/project/prelims/#files'
+
+
+def setup_package():
+    metadata = dict(
+        name=DISTNAME,
+        version=VERSION,
+        description=DESCRIPTION,
+        long_description=LONG_DESCRIPTION,
+        long_description_content_type=LONG_DESCRIPTION_CONTENT_TYPE,
+        author=AUTHOR,
+        author_email=AUTHOR_EMAIL,
+        license=LICENSE,
+        url=URL,
+        download_url=DOWNLOAD_URL,
+        classifiers=[
+            'Intended Audience :: Developers',
+            'License :: OSI Approved',
+            'Programming Language :: Python',
+            'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary',
+            'Topic :: Office/Business :: News/Diary',
+            'Topic :: Software Development',
+            'Topic :: Text Processing :: Markup',
+            'Development Status :: 3 - Alpha',
+            'Operating System :: Microsoft :: Windows',
+            'Operating System :: POSIX',
+            'Operating System :: Unix',
+            'Operating System :: MacOS',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9'
+        ],
+        packages=find_packages(exclude=['*tests*']),
+        python_requires='>=3.7',  # follow sklearn
+        install_requires=['numpy', 'scikit_learn', 'PyYAML'],
+    )
+
+    setup(**metadata)
+
+
+if __name__ == '__main__':
+    setup_package()
