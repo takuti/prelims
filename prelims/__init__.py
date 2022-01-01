@@ -1,4 +1,5 @@
 from .handler import StaticSitePostsHandler
+from .post import Post
 
 
-__all__ = ['StaticSitePostsHandler']
+__all__ = ['Post', 'StaticSitePostsHandler']
