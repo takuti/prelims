@@ -58,7 +58,7 @@ Here, the following script reads all `.md` and `.html` files in the folder, buil
 
 ```py
 from prelims import StaticSitePostsHandler
-from prelims.processors import Recommender
+from prelims.processor import Recommender
 
 
 handler = StaticSitePostsHandler('/path/to/posts')
