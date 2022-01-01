@@ -43,11 +43,15 @@ class Post(object):
             return
 
         m = RE_FRONT_MATTER.search(self.raw_content)
+        # Don't expand array value to markdown-style list notation
+        # https://github.com/yaml/pyyaml/pull/256
+        value_types = {type(value) for value in self.front_matter.values()}
+        flow_style = None if list in value_types else False
         with open(self.path, 'w') as f:
             content = self.raw_content.replace(
                 m.group(1),
                 yaml.dump(self.front_matter, allow_unicode=True,
-                          default_flow_style=None)
+                          default_flow_style=flow_style)
             )
             f.write(content)
 
