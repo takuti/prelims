@@ -1,6 +1,8 @@
 Prelims
 ===
 
+[![Dry Run Build](https://github.com/takuti/prelims/actions/workflows/dryrun.yml/badge.svg)](https://github.com/takuti/prelims/actions/workflows/dryrun.yml) [![PyPI version](https://badge.fury.io/py/prelims.svg)](https://badge.fury.io/py/prelims)
+
 Front matter post-processor for static site generators.
 
 ## Overview
@@ -40,7 +42,7 @@ title: 'User-Centricity Matters: My Reading List from RecSys 2021'
 ## Installation
 
 ```
-$ pip install git+https://github.com/takuti/prelims.git
+$ pip install prelims
 ```
 
 ## Usage
