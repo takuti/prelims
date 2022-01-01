@@ -72,6 +72,6 @@ class Post(object):
             content = raw_content.replace(m.group(0), '')
 
         for re_filter in RE_FILTERS:
-            content = re_filter.sub('', content)
+            content = re_filter.sub('', content).strip()
 
         return Post(path, front_matter, raw_content, content)
