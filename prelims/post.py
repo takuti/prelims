@@ -16,11 +16,12 @@ RE_FILTERS = [
 
 class Post(object):
 
-    def __init__(self, path, front_matter, raw_content, content):
+    def __init__(self, path, front_matter, raw_content, content, encoding):
         self.path = path
         self.front_matter = front_matter
         self.raw_content = raw_content
         self.content = content
+        self.encoding = encoding
 
     def update(self, key, value, allow_overwrite=False):
         if key in self.front_matter and not allow_overwrite:
@@ -47,7 +48,7 @@ class Post(object):
         # https://github.com/yaml/pyyaml/pull/256
         value_types = {type(value) for value in self.front_matter.values()}
         flow_style = None if list in value_types else False
-        with open(self.path, 'w') as f:
+        with open(self.path, 'w', encoding=self.encoding) as f:
             content = self.raw_content.replace(
                 m.group(1),
                 yaml.dump(self.front_matter, allow_unicode=True,
@@ -56,8 +57,8 @@ class Post(object):
             f.write(content)
 
     @staticmethod
-    def load(path):
-        with open(path) as f:
+    def load(path, encoding):
+        with open(path, encoding=encoding) as f:
             raw_content = f.read()
 
         front_matter = None
@@ -74,4 +75,4 @@ class Post(object):
         for re_filter in RE_FILTERS:
             content = re_filter.sub('', content).strip()
 
-        return Post(path, front_matter, raw_content, content)
+        return Post(path, front_matter, raw_content, content, encoding)

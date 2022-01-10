@@ -2,6 +2,7 @@ from .base import BaseFrontMatterProcessor
 
 import re
 import numpy as np
+from pathlib import PurePosixPath
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -48,4 +49,4 @@ class Recommender(BaseFrontMatterProcessor):
         """Extract a permalink portion of a file path, excluding a file extension.
         """
         pattern = rf'({re.escape(self.permalink_base)}/.+?)(\.md|\.html)'
-        return re.search(pattern, path).group(1) + '/'
+        return re.search(pattern, str(PurePosixPath(path))).group(1) + '/'
