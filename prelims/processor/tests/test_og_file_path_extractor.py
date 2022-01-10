@@ -27,7 +27,8 @@ class OpenGraphFilePathExtractorTestCase(TestCase):
                    <source src="/videos/foo/movie.mp4" type="video/mp4">
                    Your browser does not support the video tag.
                  </video>
-                 """)
+                 """,
+                 "utf-8")
         extractor.process([p])
 
         self.assertTrue('images' in p.front_matter)

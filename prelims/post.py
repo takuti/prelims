@@ -16,7 +16,7 @@ RE_FILTERS = [
 
 class Post(object):
 
-    def __init__(self, path, front_matter, raw_content, content, encoding):
+    def __init__(self, path, front_matter, raw_content, content, encoding='utf-8'):
         self.path = path
         self.front_matter = front_matter
         self.raw_content = raw_content
@@ -57,7 +57,7 @@ class Post(object):
             f.write(content)
 
     @staticmethod
-    def load(path, encoding):
+    def load(path, encoding="utf-8"):
         with open(path, encoding=encoding) as f:
             raw_content = f.read()
 

@@ -43,26 +43,26 @@ class PostTestCase(TestCase):
         self.dir.cleanup()
 
     def test_load(self):
-        post = Post.load(self.mdfile.name)
+        post = Post.load(self.mdfile.name, "utf-8")
         self.assertEqual(post.path, self.mdfile.name)
         self.assertEqual(post.front_matter, {'aaa': 'xxx', 'bbb': ['xxx']})
         self.assertEqual(post.raw_content, content)
         self.assertEqual(post.content, 'Hello world.')
 
     def test_is_draft(self):
-        post = Post.load(self.mdfile.name)
+        post = Post.load(self.mdfile.name, "utf-8")
         self.assertFalse(post.is_draft())
         post_draft = Post.load(self.mdfile_draft.name)
         self.assertTrue(post_draft.is_draft())
 
     def test_is_valid(self):
-        post = Post.load(self.mdfile.name)
+        post = Post.load(self.mdfile.name, "utf-8")
         self.assertTrue(post.is_valid())
         post_draft = Post.load(self.mdfile_draft.name)
         self.assertFalse(post_draft.is_valid())
 
     def test_update(self):
-        post = Post.load(self.mdfile.name)
+        post = Post.load(self.mdfile.name, "utf-8")
 
         post.update('aaa', 'zzz', allow_overwrite=False)
         post.update('bbb', ['zzz'], allow_overwrite=True)
@@ -73,7 +73,7 @@ class PostTestCase(TestCase):
                          {'aaa': 'xxx', 'bbb': ['zzz'], 'foo': 'bar'})
 
     def test_save(self):
-        post = Post.load(self.mdfile.name)
+        post = Post.load(self.mdfile.name, "utf-8")
         post.update('foo', 'bar')
         post.save()
 

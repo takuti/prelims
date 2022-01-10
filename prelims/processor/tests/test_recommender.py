@@ -8,9 +8,9 @@ class RecommenderTestCase(TestCase):
 
     def test_process(self):
         post_a = Post('/path/to/posts/a.md', {'title': 'foo'},
-                      '', 'Hello world.')
+                      '', 'Hello world.', 'utf-8')
         post_b = Post('/path/to/posts/b.md', {'title': 'bar'},
-                      '', 'This is a pen.')
+                      '', 'This is a pen.', 'utf-8')
         posts = [post_a, post_b]
 
         recommender = Recommender(permalink_base='/posts')
