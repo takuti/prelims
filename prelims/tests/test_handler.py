@@ -2,6 +2,7 @@ from prelims import StaticSitePostsHandler
 from prelims.processor import BaseFrontMatterProcessor
 
 from unittest import TestCase
+import os
 import tempfile
 
 
@@ -39,17 +40,21 @@ class StaticSitePostsHandlerTestCase(TestCase):
     def setUp(self):
         self.dir = tempfile.TemporaryDirectory()
         self.mdfile = tempfile.NamedTemporaryFile(suffix='.md',
-                                                  dir=self.dir.name)
+                                                  dir=self.dir.name,
+                                                  delete=False)
         self.mdfile.write(content.encode('utf-8'))
         self.mdfile.seek(0)
         self.mdfile_draft = tempfile.NamedTemporaryFile(suffix='.md',
-                                                        dir=self.dir.name)
+                                                        dir=self.dir.name,
+                                                        delete=False)
         self.mdfile_draft.write(content_draft.encode('utf-8'))
         self.mdfile_draft.seek(0)
 
     def tearDown(self):
         self.mdfile.close()
+        os.unlink(self.mdfile.name)
         self.mdfile_draft.close()
+        os.unlink(self.mdfile_draft.name)
         self.dir.cleanup()
 
     def test_register_processor(self):
@@ -79,4 +84,6 @@ foo: bar
 
 Hello world.
 """
-        self.assertEqual(self.mdfile.read().decode(), expected_content)
+        self.assertEqual(
+            '\n'.join(self.mdfile.read().decode().splitlines()) + '\n',
+            expected_content)
