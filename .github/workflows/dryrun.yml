@@ -13,8 +13,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        # windows-latest is excluded as tempfile doesn't work perfectly for unit testing
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: [3.7, 3.8, 3.9]
 
     steps:
