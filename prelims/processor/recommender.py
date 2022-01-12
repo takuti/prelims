@@ -17,18 +17,50 @@ class Recommender(BaseFrontMatterProcessor):
     ----------
     permalink_base : str, default=''
         Part of your article path (i.e., directory) that is directly used in
-        the permalinks.  For example, if the articles are under
-        `/path/to/posts` and your website eventually gives permalinks like
-        `https://awesome-website.com/posts/article-aaa/`, it means
-        `permalink_base='/posts'`; path and permalink share the same `/posts`
-        portion.
+        the permalinks. For example, if the articles are under
+        ``/path/to/posts`` and your website eventually gives permalinks like
+        ``https://awesome-website.com/posts/article-aaa/``, it means
+        ``permalink_base='/posts'``; path and permalink share the same
+        ``/posts`` portion.
 
     topk : int, default=3
         Number of recommended articles.
 
     **kwargs : dict
-        Keyword arguments to be used to initialize sklearn's `TfidfVectorizer`.
+        Keyword arguments to be used to initialize sklearn's
+        ``TfidfVectorizer``.
 
+    Notes
+    -----
+    One possibility of using ``**kwargs`` is to explicitly provide
+    ``stop_words`` so the processor can filter out meaningless terms (e.g.,
+    'is', 'this', 'of'). Besides sklearn's ``stop_words='english'``, you could
+    leverage an arbitrary set of words; if you have installed ``spacy`` in your
+    environment, for example, their stop word list will give wider coverage of
+    words.
+
+    Examples
+    --------
+    >>> from prelims import Post
+    >>> from prelims.processor import Recommender
+    >>> from spacy.lang import en
+    >>> post_a = Post('/path/to/posts/a.md', {'title': 'foo'},
+    ...               '---\ntitle: foo\n---\n\nHellow world.',
+    ...               'Hello world.')
+    >>> post_b = Post('/path/to/posts/b.md', {'title': 'bar'},
+    ...               '---\ntitle: bar\n---\n\nThis is a pen.',
+    ...               'This is a pen.')
+    >>> recommender = Recommender(permalink_base='/posts',
+    ...                           stop_words=en.STOP_WORDS)
+    >>> recommender.process([post_a, post_b])
+    >>> post_a.front_matter.keywords
+    ['world', 'hello', 'pen']
+    >>> post_a.front_matter.recommendations
+    ['/posts/b/']
+    >>> post_b.front_matter.keywords
+    ['pen', 'world', 'hello']
+    >>> post_b.front_matter.recommendations
+    ['/posts/a/']
     """
 
     def __init__(self, permalink_base='', topk=3, **kwargs):
