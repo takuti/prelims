@@ -1,8 +1,8 @@
 from .base import BaseFrontMatterProcessor
 
-import re
+import os
+from urllib.parse import urljoin
 import numpy as np
-from pathlib import PurePosixPath
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -16,12 +16,12 @@ class Recommender(BaseFrontMatterProcessor):
     Parameters
     ----------
     permalink_base : str, default=''
-        Part of your article path (i.e., directory) that is directly used in
-        the permalinks. For example, if the articles are under
-        ``/path/to/posts`` and your website eventually gives permalinks like
-        ``https://awesome-website.com/posts/article-aaa/``, it means
-        ``permalink_base='/posts'``; path and permalink share the same
-        ``/posts`` portion.
+        Non-file name part of your article permalink. For example, if an
+        article saved under ``/path/to/articles/artcile-aaa.md`` eventually
+        becomes accessible from a URL
+        ``https://awesome-website.com/diary/post/article-aaa/``, it means
+        ``permalink_base='/diary/post'``; the permalink is a concatination of
+        the base and file name ``article-aaa``, excluding the extension.
 
     topk : int, default=3
         Number of recommended articles.
@@ -105,7 +105,8 @@ class Recommender(BaseFrontMatterProcessor):
                             allow_overwrite=True)
 
     def __path_to_permalink(self, path):
-        """Extract a permalink portion of a file path, excluding a file extension.
+        """Convert a file path into a permalink, which is a part of final URL
+        excluding a file extension.
         """
-        pattern = rf'({re.escape(self.permalink_base)}/.+?)(\.md|\.html)'
-        return re.search(pattern, str(PurePosixPath(path))).group(1) + '/'
+        file, _ = os.path.splitext(os.path.basename(path))
+        return urljoin(f'{self.permalink_base}/', f'{file}/')
