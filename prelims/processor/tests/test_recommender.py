@@ -13,7 +13,8 @@ class RecommenderTestCase(TestCase):
                       '', 'This is a pen.', 'utf-8')
         posts = [post_a, post_b]
 
-        recommender = Recommender(permalink_base='/posts')
+        recommender = Recommender(permalink_base='/posts',
+                                  stop_words='english')
         recommender.process(posts)
 
         # sort alphabetically since the order may differ
@@ -22,7 +23,7 @@ class RecommenderTestCase(TestCase):
         self.assertEqual(post_a.front_matter, {
             'title': 'foo',
             'recommendations': ['/posts/b/'],
-            'keywords': ['hello', 'is', 'pen', 'this', 'world']
+            'keywords': ['hello', 'pen', 'world']
         })
 
         post_b.front_matter['keywords'] = sorted(
@@ -30,5 +31,5 @@ class RecommenderTestCase(TestCase):
         self.assertEqual(post_b.front_matter, {
             'title': 'bar',
             'recommendations': ['/posts/a/'],
-            'keywords': ['hello', 'is', 'pen', 'this', 'world']
+            'keywords': ['hello', 'pen', 'world']
         })
