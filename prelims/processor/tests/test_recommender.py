@@ -11,14 +11,14 @@ class RecommenderTestCase(TestCase):
     def setUp(self):
         # file paths
         self.path_a = os.path.abspath(
-                os.path.join(os.sep, 'path', 'to', 'posts', 'a.md'))
+                os.path.join(os.sep, 'path', 'to', 'articles', 'a.md'))
         self.path_b = os.path.abspath(
-                os.path.join(os.sep, 'path', 'to', 'posts', 'b.md'))
+                os.path.join(os.sep, 'path', 'to', 'articles', 'b.md'))
 
         # urls
-        self.permalink_base = '/posts'
-        self.permalink_a = '/posts/a/'
-        self.permalink_b = '/posts/b/'
+        self.permalink_base = '/diary/post'
+        self.permalink_a = '/diary/post/a/'
+        self.permalink_b = '/diary/post/b/'
 
     def test_process(self):
         post_a = Post(self.path_a, {'title': 'foo'},
