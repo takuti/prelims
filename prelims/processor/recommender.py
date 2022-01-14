@@ -73,7 +73,7 @@ class Recommender(BaseFrontMatterProcessor):
                 vectorizer_kwargs[arg] = value
         self.vectorizer_kwargs = vectorizer_kwargs
 
-    def process(self, posts):
+    def process(self, posts, allow_overwrite=True):
         """Extract keywords and generate a list of recommended articles
         based on the content-based filtering technique.
         """
@@ -100,9 +100,9 @@ class Recommender(BaseFrontMatterProcessor):
             ]
 
             posts[i].update('keywords', keywords[i, :10].tolist(),
-                            allow_overwrite=True)
+                            allow_overwrite)
             posts[i].update('recommendations', recommend_permalinks,
-                            allow_overwrite=True)
+                            allow_overwrite)
 
     def __path_to_permalink(self, path):
         """Convert a file path into a permalink, which is a part of final URL

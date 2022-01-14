@@ -60,3 +60,41 @@ class RecommenderTestCase(TestCase):
             'recommendations': [self.permalink_b, self.permalink_a],
             'keywords': ['castle', 'hello', 'high', 'man', 'pen', 'world']
         })
+
+        post_b.content = "It's an apple"
+
+        recommender.process(posts, allow_overwrite=False)
+
+        post_a.front_matter['keywords'] = sorted(
+            post_a.front_matter['keywords'])
+        self.assertEqual(post_a.front_matter, {
+            'title': 'foo',
+            'recommendations': [self.permalink_b],
+            'keywords': ['hello', 'pen', 'world']
+        })
+
+        post_b.front_matter['keywords'] = sorted(
+            post_b.front_matter['keywords'])
+        self.assertEqual(post_b.front_matter, {
+            'title': 'bar',
+            'recommendations': [self.permalink_a],
+            'keywords': ['hello', 'pen', 'world']
+        })
+
+        recommender.process(posts, allow_overwrite=True)
+
+        post_a.front_matter['keywords'] = sorted(
+            post_a.front_matter['keywords'])
+        self.assertEqual(post_a.front_matter, {
+            'title': 'foo',
+            'recommendations': [self.permalink_b],
+            'keywords': ['apple', 'hello', 'world']
+        })
+
+        post_b.front_matter['keywords'] = sorted(
+            post_b.front_matter['keywords'])
+        self.assertEqual(post_b.front_matter, {
+            'title': 'bar',
+            'recommendations': [self.permalink_a],
+            'keywords': ['apple', 'hello', 'world']
+        })

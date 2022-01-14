@@ -16,7 +16,8 @@ RE_FILTERS = [
 
 class Post(object):
 
-    def __init__(self, path, front_matter, raw_content, content, encoding='utf-8'):
+    def __init__(self, path, front_matter, raw_content, content,
+                 encoding='utf-8'):
         self.path = path
         self.front_matter = front_matter
         self.raw_content = raw_content
@@ -27,6 +28,11 @@ class Post(object):
         if key in self.front_matter and not allow_overwrite:
             return
         self.front_matter[key] = value
+
+    def clear(self, keys):
+        for key in keys:
+            if key in self.front_matter:
+                del self.front_matter[key]
 
     def is_draft(self):
         # avoid processing draft articles
