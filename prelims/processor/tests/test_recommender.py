@@ -14,18 +14,23 @@ class RecommenderTestCase(TestCase):
                 os.path.join(os.sep, 'path', 'to', 'articles', 'a.md'))
         self.path_b = os.path.abspath(
                 os.path.join(os.sep, 'path', 'to', 'articles', 'b.md'))
+        self.path_c = os.path.abspath(
+                os.path.join(os.sep, 'path', 'to', 'articles', 'c', 'index.md'))
 
         # urls
         self.permalink_base = '/diary/post'
         self.permalink_a = '/diary/post/a/'
         self.permalink_b = '/diary/post/b/'
+        self.permalink_c = '/diary/post/c/'
 
     def test_process(self):
         post_a = Post(self.path_a, {'title': 'foo'},
                       '', 'Hello world.', 'utf-8')
         post_b = Post(self.path_b, {'title': 'bar'},
                       '', 'This is a pen.', 'utf-8')
-        posts = [post_a, post_b]
+        post_c = Post(self.path_c, {'title': 'buzz'},
+                      '', 'There is a man in the high castle.', 'utf-8')
+        posts = [post_a, post_b, post_c]
 
         recommender = Recommender(permalink_base=self.permalink_base,
                                   stop_words='english')
@@ -36,14 +41,22 @@ class RecommenderTestCase(TestCase):
             post_a.front_matter['keywords'])
         self.assertEqual(post_a.front_matter, {
             'title': 'foo',
-            'recommendations': [self.permalink_b],
-            'keywords': ['hello', 'pen', 'world']
+            'recommendations': [self.permalink_c, self.permalink_b],
+            'keywords': ['castle', 'hello', 'high', 'man', 'pen', 'world']
         })
 
         post_b.front_matter['keywords'] = sorted(
             post_b.front_matter['keywords'])
         self.assertEqual(post_b.front_matter, {
             'title': 'bar',
-            'recommendations': [self.permalink_a],
-            'keywords': ['hello', 'pen', 'world']
+            'recommendations': [self.permalink_c, self.permalink_a],
+            'keywords': ['castle', 'hello', 'high', 'man', 'pen', 'world']
+        })
+
+        post_c.front_matter['keywords'] = sorted(
+            post_c.front_matter['keywords'])
+        self.assertEqual(post_c.front_matter, {
+            'title': 'buzz',
+            'recommendations': [self.permalink_b, self.permalink_a],
+            'keywords': ['castle', 'hello', 'high', 'man', 'pen', 'world']
         })

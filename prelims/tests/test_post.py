@@ -8,6 +8,7 @@ import tempfile
 content = """
 ---
 aaa: xxx
+ccc: xxx
 bbb: [xxx]
 ---
 
@@ -50,7 +51,7 @@ class PostTestCase(TestCase):
     def test_load(self):
         post = Post.load(self.mdfile.name, "utf-8")
         self.assertEqual(post.path, self.mdfile.name)
-        self.assertEqual(post.front_matter, {'aaa': 'xxx', 'bbb': ['xxx']})
+        self.assertEqual(post.front_matter, {'aaa': 'xxx', 'ccc': 'xxx', 'bbb': ['xxx']})
         self.assertEqual(post.raw_content, content)
         self.assertEqual(post.content, 'Hello world.')
 
@@ -75,7 +76,7 @@ class PostTestCase(TestCase):
 
         self.assertEqual(post.path, self.mdfile.name)
         self.assertEqual(post.front_matter,
-                         {'aaa': 'xxx', 'bbb': ['zzz'], 'foo': 'bar'})
+                         {'aaa': 'xxx', 'ccc': 'xxx', 'bbb': ['zzz'], 'foo': 'bar'})
 
     def test_save(self):
         post = Post.load(self.mdfile.name, "utf-8")
@@ -85,6 +86,7 @@ class PostTestCase(TestCase):
         expected_content = """
 ---
 aaa: xxx
+ccc: xxx
 bbb: [xxx]
 foo: bar
 ---

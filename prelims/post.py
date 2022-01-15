@@ -52,7 +52,8 @@ class Post(object):
             content = self.raw_content.replace(
                 m.group(1),
                 yaml.dump(self.front_matter, allow_unicode=True,
-                          default_flow_style=flow_style)
+                          default_flow_style=flow_style,
+                          sort_keys=False)
             )
             f.write(content)
 
