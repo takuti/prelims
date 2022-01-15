@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 DISTNAME = 'prelims'
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 DESCRIPTION = 'Front matter post-processor for static site generators'
 with open('README.md') as f:
     LONG_DESCRIPTION = f.read()
@@ -45,7 +45,7 @@ def setup_package():
         ],
         packages=find_packages(exclude=['*tests*']),
         python_requires='>=3.7',  # follow sklearn
-        install_requires=['numpy', 'scikit_learn', 'PyYAML'],
+        install_requires=['numpy>=1.14.6', 'scikit_learn>=1.0', 'PyYAML>=5.1'],
     )
 
     setup(**metadata)
