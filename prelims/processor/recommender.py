@@ -109,4 +109,6 @@ class Recommender(BaseFrontMatterProcessor):
         excluding a file extension.
         """
         file, _ = os.path.splitext(os.path.basename(path))
+        if file == 'index':
+            file = os.path.basename(os.path.dirname(path))
         return urljoin(f'{self.permalink_base}/', f'{file}/')
