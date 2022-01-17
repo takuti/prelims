@@ -41,6 +41,8 @@ class Post(object):
         """
         if key in self.front_matter and not allow_overwrite:
             return
+        if value is None or len(value) == 0:
+            return
         self.front_matter[key] = value
 
     def update_all(self, target, allow_overwrite=False):
