@@ -16,7 +16,8 @@ RE_FILTERS = [
 
 class Post(object):
 
-    def __init__(self, path, front_matter, raw_content, content, encoding='utf-8'):
+    def __init__(self, path, front_matter, raw_content, content,
+                 encoding='utf-8'):
         self.path = path
         self.front_matter = front_matter
         self.raw_content = raw_content
@@ -24,9 +25,44 @@ class Post(object):
         self.encoding = encoding
 
     def update(self, key, value, allow_overwrite=False):
+        """Update value of a specific front matter element.
+
+        Parameters
+        ----------
+        key : str
+            Front matter key to update.
+
+        value : str or list
+            Updated value of the target key.
+
+        allow_overwrite : bool, default=False
+            What to do if the target key already exisits. Its value is
+            overwritten when ``allow_overwrite=True``.
+        """
         if key in self.front_matter and not allow_overwrite:
             return
+        if value is None or len(value) == 0:
+            return
         self.front_matter[key] = value
+
+    def update_all(self, target, allow_overwrite=False):
+        """Update multiple keys in the front matter all at once.
+
+        Parameters
+        ----------
+        target : dict
+            Updated front matter key-value pairs.
+
+        allow_overwrite : bool, default=False
+            If True, all keys in ``target`` are first cleared from the current
+            front matter, then their values are freshly inserted. Otherwise,
+            delegate every single key-value pair to ``update`` one-by-one.
+        """
+        if allow_overwrite:
+            self.__remove_all(target.keys())
+
+        for key, value in target.items():
+            self.update(key, value, allow_overwrite)
 
     def is_draft(self):
         # avoid processing draft articles
@@ -77,3 +113,25 @@ class Post(object):
             content = re_filter.sub('', content).strip()
 
         return Post(path, front_matter, raw_content, content, encoding)
+
+    def __remove(self, key):
+        """Delete a specific front matter element.
+
+        Parameters
+        ----------
+        key : str
+            Front matter key to delete.
+        """
+        if key in self.front_matter:
+            del self.front_matter[key]
+
+    def __remove_all(self, keys):
+        """Delete multiple front matter elements.
+
+        Parameters
+        ----------
+        keys : list
+            Front matter keys to delete.
+        """
+        for key in keys:
+            self.__remove(key)

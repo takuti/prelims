@@ -47,3 +47,25 @@ class OpenGraphFilePathExtractorTestCase(TestCase):
                             'audio': ['/audio/foo/music.mp3'],
                             'videos': ['/videos/foo/movie.mp4']
                          }.items()))
+
+        p.content = """
+        modified contents
+
+        ![img1](/images/foo/img2.png)
+        """
+
+        extractor.process([p], allow_overwrite=False)
+        self.assertEqual(sorted(p.front_matter.items()),
+                         sorted({
+                            'title': 'foo',
+                            'images': ['/images/foo/img1.png'],
+                            'audio': ['/audio/foo/music.mp3'],
+                            'videos': ['/videos/foo/movie.mp4']
+                         }.items()))
+
+        extractor.process([p], allow_overwrite=True)
+        self.assertEqual(sorted(p.front_matter.items()),
+                         sorted({
+                            'title': 'foo',
+                            'images': ['/images/foo/img2.png']
+                         }.items()))

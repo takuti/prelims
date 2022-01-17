@@ -22,10 +22,11 @@ class OpenGraphFilePathExtractor(BaseFrontMatterProcessor):
                 rf'{re.escape(video_base)}/.+?(?:\.mp4|\.mov)'
             )
 
-    def process(self, posts):
+    def process(self, posts, allow_overwrite=False):
         for post in posts:
+            target = dict()
             for key, re_path in self.pattern.items():
+                re_path = self.pattern[key]
                 paths = re_path.findall(post.content)
-                if len(paths) == 0:
-                    continue
-                post.update(key, paths)
+                target[key] = paths
+            post.update_all(target, allow_overwrite)

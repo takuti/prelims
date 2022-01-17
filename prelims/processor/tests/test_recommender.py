@@ -60,3 +60,25 @@ class RecommenderTestCase(TestCase):
             'recommendations': [self.permalink_b, self.permalink_a],
             'keywords': ['castle', 'hello', 'high', 'man', 'pen', 'world']
         })
+
+        post_b.content = "It's an apple"
+
+        # nothing should change
+        recommender.process(posts, allow_overwrite=False)
+        post_b.front_matter['keywords'] = sorted(
+            post_b.front_matter['keywords'])
+        self.assertEqual(post_b.front_matter, {
+            'title': 'bar',
+            'recommendations': [self.permalink_c, self.permalink_a],
+            'keywords': ['castle', 'hello', 'high', 'man', 'pen', 'world']
+        })
+
+        # keyword "pen" in article B should be overwritten by "apple"
+        recommender.process(posts, allow_overwrite=True)
+        post_b.front_matter['keywords'] = sorted(
+            post_b.front_matter['keywords'])
+        self.assertEqual(post_b.front_matter, {
+            'title': 'bar',
+            'recommendations': [self.permalink_c, self.permalink_a],
+            'keywords': ['apple', 'castle', 'hello', 'high', 'man', 'world']
+        })
