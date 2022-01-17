@@ -10,9 +10,9 @@ class RecommenderTestCase(TestCase):
 
     def setUp(self):
         # file paths
-        self.path_a = Path('path').joinpath(f'{os.sep}to', 'articles', 'a.md')
-        self.path_b = Path('path').joinpath(f'{os.sep}to', 'articles', 'b.md')
-        self.path_c = Path('path').joinpath(f'{os.sep}to', 'articles', 'c', 'index.md')
+        self.path_a = Path(f'{os.sep}path').joinpath('to', 'articles', 'a.md')
+        self.path_b = Path(f'{os.sep}path').joinpath('to', 'articles', 'b.md')
+        self.path_c = Path(f'{os.sep}path').joinpath('to', 'articles', 'c', 'index.md')
 
         # urls
         self.permalink_base = '/diary/post'
