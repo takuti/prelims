@@ -99,10 +99,10 @@ class Recommender(BaseFrontMatterProcessor):
                 self.__path_to_permalink(paths[j]) for j in top_indices
             ]
 
-            posts[i].update('keywords', keywords[i, :10].tolist(),
-                            allow_overwrite)
-            posts[i].update('recommendations', recommend_permalinks,
-                            allow_overwrite)
+            posts[i].update_all({
+                'keywords': keywords[i, :10].tolist(),
+                'recommendations': recommend_permalinks
+            }, allow_overwrite)
 
     def __path_to_permalink(self, path):
         """Convert a file path into a permalink, which is a part of final URL

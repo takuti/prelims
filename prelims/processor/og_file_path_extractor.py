@@ -6,7 +6,6 @@ import re
 class OpenGraphFilePathExtractor(BaseFrontMatterProcessor):
 
     def __init__(self, image_base=None, audio_base=None, video_base=None):
-        self.keys = ['images', 'audio', 'videos']
         self.pattern = dict()
         if image_base is not None:
             self.pattern['images'] = re.compile(
@@ -25,10 +24,9 @@ class OpenGraphFilePathExtractor(BaseFrontMatterProcessor):
 
     def process(self, posts, allow_overwrite=False):
         for post in posts:
-            if allow_overwrite:
-                post.clear(self.keys)
+            target = dict()
             for key, re_path in self.pattern.items():
+                re_path = self.pattern[key]
                 paths = re_path.findall(post.content)
-                if len(paths) == 0:
-                    continue
-                post.update(key, paths, allow_overwrite)
+                target[key] = paths
+            post.update_all(target, allow_overwrite)
