@@ -1,5 +1,5 @@
 from prelims import Post
-from prelims.processor import OpenGraphFilePathExtractor
+from prelims.processor import OpenGraphMediaExtractor
 
 from unittest import TestCase
 
@@ -13,7 +13,7 @@ class OpenGraphFilePathExtractorTestCase(TestCase):
                 os.path.join(os.sep, 'path', 'to', 'posts', 'a.md'))
 
     def test_process(self):
-        extractor = OpenGraphFilePathExtractor(
+        extractor = OpenGraphMediaExtractor(
             image_base='/images', audio_base='/audio', video_base='/videos')
 
         p = Post(self.post_path, {'title': 'foo'},
