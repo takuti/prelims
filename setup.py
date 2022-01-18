@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 DISTNAME = 'prelims'
-VERSION = '0.0.4'
+VERSION = '0.0.5'
 DESCRIPTION = 'Front matter post-processor for static site generators'
 with open('README.md') as f:
     LONG_DESCRIPTION = f.read()
