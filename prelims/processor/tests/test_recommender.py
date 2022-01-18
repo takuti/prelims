@@ -4,18 +4,15 @@ from prelims.processor import Recommender
 from unittest import TestCase
 
 import os
-
+from pathlib import Path
 
 class RecommenderTestCase(TestCase):
 
     def setUp(self):
         # file paths
-        self.path_a = os.path.abspath(
-                os.path.join(os.sep, 'path', 'to', 'articles', 'a.md'))
-        self.path_b = os.path.abspath(
-                os.path.join(os.sep, 'path', 'to', 'articles', 'b.md'))
-        self.path_c = os.path.abspath(
-                os.path.join(os.sep, 'path', 'to', 'articles', 'c', 'index.md'))
+        self.path_a = Path(f'{os.sep}path').joinpath('to', 'articles', 'a.md')
+        self.path_b = Path(f'{os.sep}path').joinpath('to', 'articles', 'b.md')
+        self.path_c = Path(f'{os.sep}path').joinpath('to', 'articles', 'c', 'index.md')
 
         # urls
         self.permalink_base = '/diary/post'

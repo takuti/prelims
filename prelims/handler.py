@@ -5,7 +5,7 @@ from pathlib import Path
 
 class StaticSitePostsHandler(object):
 
-    def __init__(self, path_dir, encoding='utf-8'):
+    def __init__(self, path_dir, ignore_files=None, encoding='utf-8'):
         assert os.path.isdir(os.path.expanduser(path_dir)), \
             f'path {path_dir} is not a directory or does not exist'
 
@@ -13,6 +13,7 @@ class StaticSitePostsHandler(object):
         self.paths = [p for p in Path(path_dir).rglob('*') if p.suffix in exts]
         self.processors = []
         self.encoding = encoding
+        self.ignore_files = [] if ignore_files is None else ignore_files
 
     def register_processor(self, processor):
         """Add a front matter processor to the queue.
@@ -34,6 +35,9 @@ class StaticSitePostsHandler(object):
         """
         posts = []
         for path in self.paths:
+            if path.name in self.ignore_files:
+                continue
+
             post = Post.load(path, self.encoding)
             if post.is_valid():
                 posts.append(post)

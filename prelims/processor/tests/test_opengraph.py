@@ -4,13 +4,12 @@ from prelims.processor import OpenGraphMediaExtractor
 from unittest import TestCase
 
 import os
-
+from pathlib import Path
 
 class OpenGraphFilePathExtractorTestCase(TestCase):
 
     def setUp(self):
-        self.post_path = os.path.abspath(
-                os.path.join(os.sep, 'path', 'to', 'posts', 'a.md'))
+        self.post_path = Path(f'{os.sep}path').joinpath('to', 'posts', 'a.md')
 
     def test_process(self):
         extractor = OpenGraphMediaExtractor(

@@ -25,6 +25,14 @@ draft: true
 This is draft content to be ignored.
 """
 
+content_ignore = """
+---
+zzz: iii
+yyy: jjj
+---
+
+[Tags](/tags)
+"""
 
 class DummyProcessor(BaseFrontMatterProcessor):
 
@@ -49,12 +57,19 @@ class StaticSitePostsHandlerTestCase(TestCase):
                                                         delete=False)
         self.mdfile_draft.write(content_draft.encode('utf-8'))
         self.mdfile_draft.seek(0)
+        self.mdfile_ignore = tempfile.NamedTemporaryFile(suffix='.md',
+                                                        dir=self.dir.name,
+                                                        delete=False)
+        self.mdfile_ignore.write(content_ignore.encode('utf-8'))
+        self.mdfile_ignore.seek(0)
 
     def tearDown(self):
         self.mdfile.close()
         os.unlink(self.mdfile.name)
         self.mdfile_draft.close()
         os.unlink(self.mdfile_draft.name)
+        self.mdfile_ignore.close()
+        os.unlink(self.mdfile_ignore.name)
         self.dir.cleanup()
 
     def test_register_processor(self):
@@ -64,10 +79,17 @@ class StaticSitePostsHandlerTestCase(TestCase):
         self.assertEqual(len(handler.processors), 1)
 
     def test_load_posts(self):
-        handler = StaticSitePostsHandler(self.dir.name)
+        handler = StaticSitePostsHandler(
+            self.dir.name,
+            ignore_files=[os.path.basename(self.mdfile_ignore.name)])
         posts = handler.load_posts()
         self.assertEqual(len(posts), 1)
         self.assertEqual(posts[0].front_matter, {'aaa': 'xxx', 'bbb': ['xxx']})
+
+    def test_load_posts_without_ignorance(self):
+        handler = StaticSitePostsHandler(self.dir.name)
+        posts = handler.load_posts()
+        self.assertEqual(len(posts), 2)
 
     def test_execute(self):
         handler = StaticSitePostsHandler(self.dir.name)

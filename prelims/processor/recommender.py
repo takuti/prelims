@@ -108,7 +108,7 @@ class Recommender(BaseFrontMatterProcessor):
         """Convert a file path into a permalink, which is a part of final URL
         excluding a file extension.
         """
-        file, _ = os.path.splitext(os.path.basename(path))
+        file = path.stem
         if file == 'index':
-            file = os.path.basename(os.path.dirname(path))
+            file = path.parent.name
         return urljoin(f'{self.permalink_base}/', f'{file}/')
