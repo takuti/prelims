@@ -111,4 +111,4 @@ class Recommender(BaseFrontMatterProcessor):
         file = path.stem
         if file == 'index':
             file = path.parent.name
-        return urljoin(f'{self.permalink_base}/', f'{file}/')
+        return urljoin(f'{self.permalink_base}/', f'{file.lower()}/')
