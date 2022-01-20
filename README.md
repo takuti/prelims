@@ -99,3 +99,8 @@ $ npm install -D lint-staged
   ...
 }
 ```
+
+## Limitations
+
+- The author is testing and using Prelims mainly with [Hugo](https://gohugo.io/). Although the tool is intended to be applicable to a variety of static site generators, there must be several edge cases that won't work properly due to unique behaviors associated with a specific generator.
+- We assume there are hundreds of posts at most, not thousands. Every single post is sequentially processed one-by-one, and the `Recommender` module, for example, trains a model from scratch every time. As the number of posts increases, you may encounter scalability issues.
