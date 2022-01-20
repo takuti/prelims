@@ -34,7 +34,7 @@ class RecommenderTestCase(TestCase):
         posts = [post_a, post_b, post_c, post_d]
 
         recommender = Recommender(permalink_base=self.permalink_base,
-                                  stop_words='english')
+                                  stop_words='english', lower_path=True)
         recommender.process(posts)
 
         # sort alphabetically since the order may differ

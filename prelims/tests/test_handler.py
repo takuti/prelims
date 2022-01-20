@@ -91,6 +91,12 @@ class StaticSitePostsHandlerTestCase(TestCase):
         posts = handler.load_posts()
         self.assertEqual(len(posts), 2)
 
+    def test_load_posts_lower_path(self):
+        handler = StaticSitePostsHandler(self.dir.name, lower_path=False)
+        handler.register_processor(DummyProcessor())
+        self.assertEqual(len(handler.processors), 1)
+        self.assertEqual(handler.processors[0].lower_path, False)
+
     def test_execute(self):
         handler = StaticSitePostsHandler(self.dir.name)
         handler.register_processor(DummyProcessor())
