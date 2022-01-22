@@ -26,6 +26,9 @@ class Recommender(BaseFrontMatterProcessor):
     topk : int, default=3
         Number of recommended articles.
 
+    lower_path : boolean, default=True
+        Make paths in recommendations field lower case
+
     **kwargs : dict
         Keyword arguments to be used to initialize sklearn's
         ``TfidfVectorizer``.
@@ -63,9 +66,10 @@ class Recommender(BaseFrontMatterProcessor):
     ['/posts/a/']
     """
 
-    def __init__(self, permalink_base='', topk=3, **kwargs):
+    def __init__(self, permalink_base='', topk=3, lower_path=True, **kwargs):
         self.permalink_base = permalink_base
         self.topk = topk
+        self.lower_path = lower_path
 
         vectorizer_kwargs = TfidfVectorizer.__init__.__kwdefaults__
         for arg, value in kwargs.items():
@@ -111,4 +115,6 @@ class Recommender(BaseFrontMatterProcessor):
         file = path.stem
         if file == 'index':
             file = path.parent.name
+        if self.lower_path:
+            file = file.lower()
         return urljoin(f'{self.permalink_base}/', f'{file}/')
