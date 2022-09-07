@@ -14,16 +14,24 @@ class LastModifiedDateExtractor(BaseFrontMatterProcessor):
 
     def process(self, posts, allow_overwrite=True):
         for post in posts:
-            cmd = "git log -1 --format='%ad' --date=format:'%Y-%m-%d' " + \
-                    str(post.path)
-            date = self.__read_stdout(cmd)
-            if len(date) == 0:
+            try:
+                cmd = "git log -1 --format='%ad' --date=format:'%Y-%m-%d' " + \
+                        str(post.path)
+                date = self.__read_stdout(cmd)
+            except RuntimeError:
                 cmd = f"date -r {post.path} +'%Y-%m-%d'"
                 date = self.__read_stdout(cmd)
+            else:
+                if len(date) == 0:
+                    cmd = f"date -r {post.path} +'%Y-%m-%d'"
+                    date = self.__read_stdout(cmd)
             post.update("lastmod", date, allow_overwrite)
 
     def __read_stdout(self, cmd):
         """Run a shell command and get STDOUT.
         """
-        return subprocess.check_output(cmd, shell=True,
-                                       encoding="utf-8").rstrip()
+        try:
+            return subprocess.check_output(cmd, shell=True,
+                                           encoding="utf-8").rstrip()
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(e)
