@@ -1,12 +1,15 @@
 from .base import BaseFrontMatterProcessor
 
+from datetime import datetime
+import os
+import platform
 import subprocess
 
 
 class LastModifiedDateExtractor(BaseFrontMatterProcessor):
 
-    """Get last modified date based on git last commit date, or `date -r` if
-    the file is not committed.
+    """Get last modified date based on git last commit date, or file metadata
+    if the file is not committed.
     """
 
     def __init__(self):
@@ -19,12 +22,10 @@ class LastModifiedDateExtractor(BaseFrontMatterProcessor):
                         str(post.path)
                 date = self.__read_stdout(cmd)
             except RuntimeError:
-                cmd = f"date -r {post.path} +'%Y-%m-%d'"
-                date = self.__read_stdout(cmd)
+                date = self.__get_file_mtime(post.path)
             else:
                 if len(date) == 0:
-                    cmd = f"date -r {post.path} +'%Y-%m-%d'"
-                    date = self.__read_stdout(cmd)
+                    date = self.__get_file_mtime(post.path)
             post.update("lastmod", date, allow_overwrite)
 
     def __read_stdout(self, cmd):
@@ -35,3 +36,12 @@ class LastModifiedDateExtractor(BaseFrontMatterProcessor):
                                            encoding="utf-8").rstrip()
         except subprocess.CalledProcessError as e:
             raise RuntimeError(e)
+
+    def __get_file_mtime(self, path):
+        """https://stackoverflow.com/questions/237079/
+        """
+        if platform.system() == 'Windows':
+            ts = os.path.getmtime(path)
+        else:
+            ts = os.stat(path).st_mtime
+        return datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
