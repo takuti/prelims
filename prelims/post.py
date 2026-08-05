@@ -1,3 +1,4 @@
+import copy
 import re
 import yaml
 
@@ -20,6 +21,8 @@ class Post(object):
                  encoding='utf-8'):
         self.path = path
         self.front_matter = front_matter
+        # Keep the original to detect a no-op save
+        self.__original_front_matter = copy.deepcopy(front_matter)
         self.raw_content = raw_content
         self.content = content
         self.encoding = encoding
@@ -77,6 +80,10 @@ class Post(object):
 
     def save(self):
         if not self.is_valid():
+            return
+
+        # Dumping an untouched front matter still reformats it
+        if self.front_matter == self.__original_front_matter:
             return
 
         m = RE_FRONT_MATTER.search(self.raw_content)

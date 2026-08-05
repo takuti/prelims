@@ -38,6 +38,17 @@ aaa: xxx
 ---
 """
 
+content_block_style = """
+---
+aaa: xxx
+bbb:
+  - xxx
+  - yyy
+---
+
+Hello world.
+"""
+
 
 class PostTestCase(TestCase):
 
@@ -58,6 +69,10 @@ class PostTestCase(TestCase):
                                                           delete=False)
         self.mdfile_quoting.write(content_quoting.encode('utf-8'))
         self.mdfile_quoting.seek(0)
+        self.mdfile_block_style = tempfile.NamedTemporaryFile(
+            suffix='.md', dir=self.dir.name, delete=False)
+        self.mdfile_block_style.write(content_block_style.encode('utf-8'))
+        self.mdfile_block_style.seek(0)
 
     def tearDown(self):
         self.mdfile.close()
@@ -66,6 +81,8 @@ class PostTestCase(TestCase):
         os.unlink(self.mdfile_draft.name)
         self.mdfile_quoting.close()
         os.unlink(self.mdfile_quoting.name)
+        self.mdfile_block_style.close()
+        os.unlink(self.mdfile_block_style.name)
         self.dir.cleanup()
 
     def test_load(self):
@@ -146,3 +163,33 @@ aaa: xxx
         self.assertEqual(
             '\n'.join(self.mdfile_quoting.read().decode().splitlines()) + '\n',
             expected_content)
+
+    def test_save_unchanged(self):
+        post = Post.load(self.mdfile_block_style.name, "utf-8")
+
+        # No-op since `aaa` is already set
+        post.update('aaa', 'zzz', allow_overwrite=False)
+        post.save()
+
+        # `bbb` stays block style instead of becoming `[xxx, yyy]`
+        with open(self.mdfile_block_style.name, encoding='utf-8') as f:
+            self.assertEqual(f.read(), content_block_style)
+
+    def test_save_changed(self):
+        post = Post.load(self.mdfile_block_style.name, "utf-8")
+
+        # Overwriting `aaa` is a real update, so the file is rewritten
+        post.update('aaa', 'zzz', allow_overwrite=True)
+        post.save()
+
+        expected_content = """
+---
+aaa: zzz
+bbb: [xxx, yyy]
+---
+
+Hello world.
+"""
+
+        with open(self.mdfile_block_style.name, encoding='utf-8') as f:
+            self.assertEqual(f.read(), expected_content)
