@@ -58,21 +58,21 @@ class PostTestCase(TestCase):
                                                   dir=self.dir.name,
                                                   delete=False)
         self.mdfile.write(content.encode('utf-8'))
-        self.mdfile.seek(0)
+        self.mdfile.close()
         self.mdfile_draft = tempfile.NamedTemporaryFile(suffix='.md',
                                                         dir=self.dir.name,
                                                         delete=False)
         self.mdfile_draft.write(content_draft.encode('utf-8'))
-        self.mdfile_draft.seek(0)
+        self.mdfile_draft.close()
         self.mdfile_quoting = tempfile.NamedTemporaryFile(suffix='.md',
                                                           dir=self.dir.name,
                                                           delete=False)
         self.mdfile_quoting.write(content_quoting.encode('utf-8'))
-        self.mdfile_quoting.seek(0)
+        self.mdfile_quoting.close()
         self.mdfile_block_style = tempfile.NamedTemporaryFile(
             suffix='.md', dir=self.dir.name, delete=False)
         self.mdfile_block_style.write(content_block_style.encode('utf-8'))
-        self.mdfile_block_style.seek(0)
+        self.mdfile_block_style.close()
 
     def tearDown(self):
         self.mdfile.close()
@@ -131,9 +131,10 @@ foo: bar
 Hello world.
 """
 
-        self.assertEqual(
-            '\n'.join(self.mdfile.read().decode().splitlines()) + '\n',
-            expected_content)
+        with open(self.mdfile.name, 'rb') as f:
+            actual_content = f.read().decode()
+        self.assertEqual('\n'.join(actual_content.splitlines()) + '\n',
+                         expected_content)
 
     def test_load_keeps_quoted_front_matter(self):
         post = Post.load(self.mdfile_quoting.name, "utf-8")
@@ -160,9 +161,10 @@ aaa: xxx
 ---
 """
 
-        self.assertEqual(
-            '\n'.join(self.mdfile_quoting.read().decode().splitlines()) + '\n',
-            expected_content)
+        with open(self.mdfile_quoting.name, 'rb') as f:
+            actual_content = f.read().decode()
+        self.assertEqual('\n'.join(actual_content.splitlines()) + '\n',
+                         expected_content)
 
     def test_save_unchanged(self):
         post = Post.load(self.mdfile_block_style.name, "utf-8")

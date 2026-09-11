@@ -47,7 +47,7 @@ def setup_package():
         ],
         packages=find_packages(exclude=['*tests*']),
         python_requires='>=3.10',
-        install_requires=['numpy>=1.14.6', 'scikit_learn>=1.0', 'PyYAML>=5.1'],
+        install_requires=['numpy>=1.14.6', 'scikit_learn>=1.0', 'PyYAML>=5.1', 'GitPython>=3.1'],
     )
 
     setup(**metadata)

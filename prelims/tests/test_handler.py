@@ -51,17 +51,17 @@ class StaticSitePostsHandlerTestCase(TestCase):
                                                   dir=self.dir.name,
                                                   delete=False)
         self.mdfile.write(content.encode('utf-8'))
-        self.mdfile.seek(0)
+        self.mdfile.close()
         self.mdfile_draft = tempfile.NamedTemporaryFile(suffix='.md',
                                                         dir=self.dir.name,
                                                         delete=False)
         self.mdfile_draft.write(content_draft.encode('utf-8'))
-        self.mdfile_draft.seek(0)
+        self.mdfile_draft.close()
         self.mdfile_ignore = tempfile.NamedTemporaryFile(suffix='.md',
                                                         dir=self.dir.name,
                                                         delete=False)
         self.mdfile_ignore.write(content_ignore.encode('utf-8'))
-        self.mdfile_ignore.seek(0)
+        self.mdfile_ignore.close()
 
     def tearDown(self):
         self.mdfile.close()
@@ -106,6 +106,7 @@ foo: bar
 
 Hello world.
 """
-        self.assertEqual(
-            '\n'.join(self.mdfile.read().decode().splitlines()) + '\n',
-            expected_content)
+        with open(self.mdfile.name, 'rb') as f:
+            actual_content = f.read().decode()
+        self.assertEqual('\n'.join(actual_content.splitlines()) + '\n',
+                         expected_content)

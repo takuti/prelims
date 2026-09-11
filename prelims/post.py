@@ -109,6 +109,15 @@ class Post(object):
         with open(path, encoding=encoding) as f:
             raw_content = f.read()
 
+        front_matter, content = Post.extract_front_matter(raw_content)
+
+        for re_filter in RE_FILTERS:
+            content = re_filter.sub('', content).strip()
+
+        return Post(path, front_matter, raw_content, content, encoding)
+
+    @staticmethod
+    def extract_front_matter(raw_content):
         front_matter = None
         content = raw_content
 
@@ -121,10 +130,7 @@ class Post(object):
             start, end = m.span(0)
             content = raw_content[:start] + raw_content[end:]
 
-        for re_filter in RE_FILTERS:
-            content = re_filter.sub('', content).strip()
-
-        return Post(path, front_matter, raw_content, content, encoding)
+        return front_matter, content
 
     def __remove(self, key):
         """Delete a specific front matter element.
