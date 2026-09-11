@@ -14,7 +14,7 @@ class LastModifiedDateExtractor(BaseFrontMatterProcessor):
     if the file is not committed.
     """
 
-    def __init__(self, skip_front_matter=True):
+    def __init__(self, skip_front_matter=False):
         self.repo = None
         self.skip_front_matter = skip_front_matter
 
