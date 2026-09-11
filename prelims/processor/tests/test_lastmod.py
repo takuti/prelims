@@ -26,7 +26,7 @@ class LastModifiedDateExtractorTestCase(TestCase):
                                                   dir=self.dir.name,
                                                   delete=False)
         self.mdfile.write(content.encode('utf-8'))
-        self.mdfile.seek(0)
+        self.mdfile.close()
 
     def tearDown(self):
         self.mdfile.close()
