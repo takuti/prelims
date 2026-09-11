@@ -19,16 +19,21 @@ class LastModifiedDateExtractor(BaseFrontMatterProcessor):
         self.skip_front_matter = skip_front_matter
 
     def process(self, posts, allow_overwrite=True):
-        for post in posts:
-            try:
-                lastmod = self.__get_last_commit_date(post.path)
-                date = lastmod.strftime('%Y-%m-%d') if lastmod else ''
-            except RuntimeError:
-                date = self.__get_file_mtime(post.path)
-            else:
-                if len(date) == 0:
+        try:
+            for post in posts:
+                try:
+                    lastmod = self.__get_last_commit_date(post.path)
+                    date = lastmod.strftime('%Y-%m-%d') if lastmod else ''
+                except RuntimeError:
                     date = self.__get_file_mtime(post.path)
-            post.update("lastmod", date, allow_overwrite)
+                else:
+                    if len(date) == 0:
+                        date = self.__get_file_mtime(post.path)
+                post.update("lastmod", date, allow_overwrite)
+        finally:
+            if self.repo is not None:
+                self.repo.close()
+                self.repo = None
 
     def __get_last_commit_date(self, path):
         """Get the last commit date where content changed."""
