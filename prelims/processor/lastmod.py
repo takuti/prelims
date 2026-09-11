@@ -62,6 +62,8 @@ class LastModifiedDateExtractor(BaseFrontMatterProcessor):
 
                     # Get file content at this commit
                     old_content = blob.data_stream.read().decode('utf-8')
+                    # Normalize blob line endings in case Git is configured without normalization
+                    old_content = old_content.replace('\r\n', '\n').replace('\r', '\n')
                     if self.skip_front_matter:
                         _, old_body = Post.extract_front_matter(old_content)
                     else:
